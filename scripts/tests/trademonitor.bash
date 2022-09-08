@@ -25,5 +25,5 @@ marketpair=${marketpair:-ETHUSD}
 upperbound=${upperbound:-1500}
 lowerbound=${lowerbound:-1400}
 
-cd ..
-python3 ../../backstopper/monitoring/trademonitor.py $marketpair $upperbound $lowerbound
+cd ../..
+python3 backstopper/monitoring/trademonitor.py $marketpair $upperbound $lowerbound

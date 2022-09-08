@@ -15,4 +15,5 @@ pair="ETHUSD"
 
 read -p "type a replacement value or press enter to continue with default argument [$pair]: " pair && pair=${pair:-ETHUSD}
 
-python3 ../../backstopper/informing/tickerdigger.py $pair
+cd ../..
+python3 backstopper/informing/tickerdigger.py $pair

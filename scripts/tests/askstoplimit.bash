@@ -25,4 +25,5 @@ read -p "type hostname or press enter to continue with default [$size]: " size &
 read -p "type hostname or press enter to continue with default [$stop]: " stop && stop=${stop:-0.0050}
 read -p "type hostname or press enter to continue with default [$sell]: " sell && sell=${sell:-0.0100}
 
-python3 ../../backstopper/ordering/askstoplimit.py $pair $size $stop $sell
+cd ../..
+python3 backstopper/ordering/askstoplimit.py $pair $size $stop $sell
