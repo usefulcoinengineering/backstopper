@@ -8,7 +8,7 @@
 import json
 import requests
 
-from backstopper.logging.logger import logger as logger
+from logging.logger import logger as logger
 
 import backstopper.authenticating.credentials as credentials
 
