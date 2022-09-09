@@ -16,7 +16,7 @@ action=${action:-start}
 if [ $action == "stop" ]; then kill -s KILL $(ps auwx | grep -E 'bash [b]|python3 \.' | awk '{print $2}') ; fi
 if [ $action == "start" ]; then 
     pair='ETHUSD'
-    size='0.0001'
+    size='0.0010'
     stop='0.0100'
     sell='0.0200'
     cd $(find / -type d -name "backstopper" 2>/dev/null | head -1)
