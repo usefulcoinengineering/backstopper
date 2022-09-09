@@ -10,8 +10,9 @@ import requests
 import datetime
 import time
 
+from backstopper.informing.definer import restserver
+
 from backstopper.logging.logger import logger as logger
-from backstopper.informing.definer import definer as definer
 from backstopper.authenticating.authenticator import authenticate as authenticate
 
 def notionalvolume() -> str:
@@ -27,7 +28,7 @@ def notionalvolume() -> str:
     }
     headers = authenticate( payload )
 
-    request = definer.restserver + endpoint
+    request = restserver + endpoint
     response = requests.post( request, data = None, headers = headers['restheader'] )
 
     return response
