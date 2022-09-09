@@ -9,7 +9,7 @@ import json
 from logging import Logger
 import requests
 
-from ..logging import logger as logger
+from ...backstopper.logging import logger as logger
 
 import backstopper.authenticating.credentials as credentials
 
