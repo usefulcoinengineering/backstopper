@@ -15,9 +15,9 @@ action=${action:-start}
 
 if [ $action == "stop" ]; then kill -s KILL $(ps auwx | grep -E 'bash [b]|python3 \.' | awk '{print $2}') ; fi
 if [ $action == "start" ]; then 
-    pair = 'ETHUSD'
-    size = '0.0001'
-    stop = '0.0100'
-    sell = '0.0200'
+    pair='ETHUSD'
+    size='0.0001'
+    stop='0.0100'
+    sell='0.0200'
     cd ../../ && git pull && python3 -m backstopper $pair $size $stop $sell
 fi
