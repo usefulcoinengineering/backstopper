@@ -26,7 +26,7 @@ def sendmessage( message ):
 
         logger.error ( f'Error: {e}' ) # Log error details in case there is an error.
     
-    logger.info ( f'Response to Discord Request:\n{appresponse}' ) # Log successful requests to the console.
+    logger.info ( f'Response to Discord Request:\t{appresponse}' ) # Log successful requests to the console.
 
 if __name__ == "__main__":
 
