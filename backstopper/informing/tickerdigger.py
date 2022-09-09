@@ -7,15 +7,16 @@
 
 import requests
 
+from backstopper.informing.definer import restserver
+
 from backstopper.logging.logger import logger as logger
-from backstopper.informing.definer import definer as definer
 from backstopper.messaging.messenger import sendmessage as sendmessage
 
 def ticker ( pair : str ) -> str:
 
     # Get the latest prices and trading volumes.
     endpoint = '/v1/pubticker/' + pair
-    response = requests.get( definer.restserver + endpoint ).json()
+    response = requests.get( restserver + endpoint ).json()
 
     # Uncomment to write the response to logs: 
     # logger.debug ( json.dumps( response, sort_keys=True, indent=4, separators=(',', ': ') ) )
