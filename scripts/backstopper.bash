@@ -6,9 +6,9 @@
 # script purpose: start or stop a Gemini backstopper bot
 # script argument: the action desired [start/stop]
 
-echo -e "\nchecking for active bots... "
-ps auwx | grep -e "backstopper" | grep -v "grep" && echo -e "\tthere are active bots running. "
-if [ $? == "1" ]; then echo -e "\tno active bots found... " ; fi
+echo -e "\nchecking for active backstopper bots... "
+ps auwx | grep -e "backstopper" | grep -v "grep" && echo -e "\t...there are active backstopper bots running.\n "
+if [ $? == "1" ]; then echo -e "\t...no active bots found...\n " ; fi
 
 read -p "start/stop trading bot [start]: " action
 action=${action:-start}
