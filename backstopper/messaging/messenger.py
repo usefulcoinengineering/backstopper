@@ -8,7 +8,7 @@
 import json
 import requests
 
-from .. import logging
+import backstopper.logging.logger as logger
 
 import backstopper.authenticating.credentials as credentials
 
@@ -24,9 +24,9 @@ def sendmessage( message ):
 
     except Exception as e :
 
-        logging.logger.error ( f'Error: {e}' ) # Log error details in case there is an error.
+        logger.error ( f'Error: {e}' ) # Log error details in case there is an error.
     
-    logging.logger.info ( f'Response to Discord Request:\n{appresponse}' ) # Log successful requests to the console.
+    logger.info ( f'Response to Discord Request:\n{appresponse}' ) # Log successful requests to the console.
 
 if __name__ == "__main__":
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # Override defaults with command line parameters from BASH wrapper.
     if len(sys.argv) == 2 : message = sys.argv[1]
-    else : logging.logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
+    else : logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
 
     # Send message.
     sendmessage( message )
