@@ -25,6 +25,8 @@ import asyncio
 
 from decimal import Decimal
 
+from backstopper.informing.definer import ticksizes
+
 from backstopper.logging.logger import logger
 from backstopper.informing.tickerdigger import ticker
 from backstopper.ordering.ordermanager import islive
@@ -33,7 +35,6 @@ from backstopper.ordering.stopper import askstoplimit
 from backstopper.ordering.ordermanager import cancelorder
 from backstopper.informing.volumizer import notionalvolume
 from backstopper.monitoring.trademonitor import blockpricerange
-from backstopper.informing.definer import ticksizes as ticksizes
 from backstopper.monitoring.closevalidator import confirmexecution
 from backstopper.messaging.messenger import sendmessage as sendmessage
 
