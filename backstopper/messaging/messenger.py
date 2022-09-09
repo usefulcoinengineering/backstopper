@@ -9,7 +9,7 @@ import json
 from logging import Logger
 import requests
 
-from .. import logging as logging
+from ..logging import logger as logger
 
 import backstopper.authenticating.credentials as credentials
 
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Override defaults with command line parameters from BASH wrapper.
     if len(sys.argv) == 2 : message = sys.argv[1]
-    else : logging.logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
+    else : logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
 
     # Send message.
     sendmessage( message )
