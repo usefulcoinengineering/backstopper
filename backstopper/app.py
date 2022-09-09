@@ -353,8 +353,8 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             # Post updated stop-limit order.
             logger.info = f'Submitting stop-limit (ask) order with a {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell. '
             logger.info = f'There will be an unrealized (i.e. "ratio gain") {ratiogain:,.2f}% profit/loss of {quotegain:,.2f} {pair[3:]} '
-            sendmessage ( f'Submitting new sell limit order. ' )
-            sendmessage ( f'That would realize {quotegain:,.2f} {pair[3:]} [i.e. return {ratiogain:,.2f}%]. ' )
+            # sendmessage ( f'Submitting {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell limit order. ' )
+            # sendmessage ( f'That would realize {quotegain:,.2f} {pair[3:]} [i.e. return {ratiogain:,.2f}%]. ' )
             try:
                 jsonresponse = askstoplimit( str(pair), str(size), str(stopprice), str(sellprice) ).json()
                 """
