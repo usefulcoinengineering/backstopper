@@ -12,8 +12,6 @@ import asyncio
 import datetime
 import websockets
 
-from decimal import Decimal
-
 from backstopper.logging.logger import logger as logger
 from backstopper.messaging.messenger import sendmessage as sendmessage
 from backstopper.authenticating.authenticator import authenticate as authenticator
