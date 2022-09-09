@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # Override defaults with command line parameters from BASH wrapper.
     if len(sys.argv) == 2 : message = sys.argv[1]
-    else : logger.error ( f'Incorrect number of command line arguments. Using default value of {message}...' )
+    else : logger.info ( f'Incorrect number of command line arguments. Using default value of {message}...' )
 
     # Send message.
     sendmessage( message )
