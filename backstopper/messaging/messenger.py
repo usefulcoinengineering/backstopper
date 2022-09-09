@@ -8,9 +8,9 @@
 import json
 import requests
 
-import backstopper.logging.logger as logger
-
 import backstopper.authenticating.credentials as credentials
+
+from backstopper.logging.logger import logger as logger
 
 # Define alert function
 def sendmessage( message ):
