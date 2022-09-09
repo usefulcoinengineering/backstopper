@@ -197,7 +197,8 @@ while True : # Block until achieving the successful submission of an initial sto
         logger.info ( f'Unable to get information on ask stop limit order. Error: {e}' )
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
         continue # Keep trying to submit ask stop limit order.
-    logger.debug ( json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(',', ': ') ) )
+    jsondeposits = json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(',', ': ') )
+    logger.debug ( f'\n{jsondeposits}' )
     time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
     break # Break out of the while loop because the subroutine ran successfully.
 
