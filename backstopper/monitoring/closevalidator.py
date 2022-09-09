@@ -14,7 +14,7 @@ import websockets
 
 from backstopper.logging.logger import logger as logger
 from backstopper.messaging.messenger import sendmessage as sendmessage
-from backstopper.authenticating.authenticator import authenticate as authenticator
+from backstopper.authenticating.authenticator import authenticate as authenticate
 
 async def confirmexecution (
         order : str
@@ -33,7 +33,7 @@ async def confirmexecution (
         'request': endpoint,
         'nonce': nonce
     }
-    header = authenticator.authenticate(payload)
+    header = authenticate(payload)
 
     # Introduce function.
     logger.info(f'Looping while {order} is live (i.e. active and not "closed") on Gemini\'s orderbook... ')
