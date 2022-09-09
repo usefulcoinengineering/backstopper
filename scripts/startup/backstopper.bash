@@ -19,5 +19,5 @@ if [ $action == "start" ]; then
     size='0.0001'
     stop='0.0100'
     sell='0.0200'
-    cd ../../ && git pull && python3 -m backstopper $pair $size $stop $sell
+    cd ../.. && pwd && git pull && python3 -m backstopper $pair $size $stop $sell
 fi
