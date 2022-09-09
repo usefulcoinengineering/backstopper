@@ -1,14 +1,21 @@
+# Backstopper
+
+This repository is a collection of packages that engage with a trading account on Gemini to purchase an asset and sell it after the price rises a specified amount. However, the selling price is continually updated if the prices rise further.
+
+## Quickstart
+
 Run the following commands to rapidly setup the execution environment:
 
 ```bash
 git clone https://github.com/usefulcoinengineering/backstopper.git
 cd backstopper
-cp examples/example-credentials.py libraries/credentials.py
+cp backstopper/examples/example-credentials.py backstopper/authenticating/credentials.py
 sudo apt-get update --assume-yes
 sudo apt-get install --assume-yes python3-pip
 pip3 install websockets
 sudo timedatectl set-timezone America/Jamaica
 bash scripts/sethostname.bash
+pip install -e .
 ```
 
 ## Gemini API Credentials:
