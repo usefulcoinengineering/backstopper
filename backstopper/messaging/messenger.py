@@ -6,9 +6,10 @@
 # library purpose: send alert messages to a monitored Discord Server Channel using webhooks.
 
 import json
+from logging import Logger
 import requests
 
-from backstopper.logging.logger import logger as logger
+from .. import logging as logging
 
 import backstopper.authenticating.credentials as credentials
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
 
     # Override defaults with command line parameters from BASH wrapper.
     if len(sys.argv) == 2 : message = sys.argv[1]
-    else : logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
+    else : logging.logger.warning ( f'Incorrect number of command line arguments. Using default value of {message}...' )
 
     # Send message.
     sendmessage( message )
