@@ -374,29 +374,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
                 logger.debug ( f'Unable to get information on the stop-limit order cancellation request. Error: {e}' )
                 time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
                 continue # Keep trying to post stop limit order infinitely.
-            try:
-                
-                if jsonresponse['is_live'] : 
-                    order = jsonresponse['order_id']
-                    price = jsonresponse['price']
-                    infomessage = f'Updated {price} stop limit order {order} is live on the Gemini orderbook. '
-                    # logger.info ( infomessage )
-                    break # Break out of the while loop because the stop order was executed and we now want to block until prices rise.
-                else : 
-                    logger.info ( 'An error occurred. Unable to submit a stop limit order. ' )
-                    continue # Keep trying to post stop limit order infinitely.
-            except KeyError as e:
-                warningmessage = f'KeyError: {e} was not present in the response from the REST API server. '
-                logger.warning ( f'{warningmessage} Something went wrong.. Checking for an error message... ' )
-                try:    
-                    if jsonresponse["result"] : 
-                        logger.warning ( f'\"{jsonresponse["reason"]}\" {jsonresponse["result"]}: {jsonresponse["message"]} ' )
-                        continue # Keep trying to post stop limit order infinitely.
-                except Exception as e:
-                    criticalmessage = f'Exception: {e} '
-                    logger.critical ( f'Unexpecter error. {criticalmessage} ' ) ; sendmessage ( f'Unexpecter error. {criticalmessage} ' )
-                    time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
-                    continue # Keep trying to post stop limit order infinitely.
+            break
 
 # Recalculate quote gain.
 quotegain = Decimal( sellprice * size - costprice * size ).quantize( tick )
