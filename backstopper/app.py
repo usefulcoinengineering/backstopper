@@ -235,8 +235,15 @@ while True : # Block until order status has been determined.
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue
 
+# Counter.
+iteration = 0
+
 # Loop.
 while True : # Block until prices rise (then cancel and resubmit stop limit order) or block until a stop limit ask order was "closed". 
+
+    # Augment counter.
+    iteration = iteration + 1
+    logger.info ( f'Iteration: {iteration}')
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
