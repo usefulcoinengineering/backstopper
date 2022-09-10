@@ -31,9 +31,6 @@ if [ $action == "start" ]; then
         echo -e "\ngoing to execute:\n\npython3 -m backstopper $pair $size $stop $sell\n\n"
     fi
     
-    # get latest version.
-    cd $(find / -type d -name "backstopper" 2>/dev/null | head -1) && git pull
-
-    # execute latest version.
-    python3 -m backstopper $pair $size $stop $sell
+    # fetch and execute the latest version of backstopper.
+    cd $(find / -type d -name "backstopper" 2>/dev/null | head -1) && git pull && python3 -m backstopper $pair $size $stop $sell
 fi
