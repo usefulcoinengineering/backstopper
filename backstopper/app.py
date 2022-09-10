@@ -243,7 +243,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
 
     # Augment counter.
     iteration = iteration + 1
-    logger.info ( iteration )
+    logger.debug ( iteration )
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
