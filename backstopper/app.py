@@ -243,7 +243,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
 
     # Augment counter.
     iteration = iteration + 1
-    logger.info ( f'Iteration: {iteration}')
+    logger.info ( f'Iteration: {str(iteration)}')
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
@@ -270,9 +270,9 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
             websocketoutput : str = asyncio.run (
                 blockpricerange (
-                    marketpair = str(pair), 
-                    upperbound = str(exitprice), 
-                    lowerbound = str(sellprice) 
+                    str(pair), 
+                    str(exitprice), 
+                    str(sellprice) 
                 )
             )
         except Exception as e:
