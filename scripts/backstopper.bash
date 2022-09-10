@@ -17,7 +17,7 @@ if [ $action == "stop" ]; then kill -s KILL $(ps auwx | grep -e "backstopper" | 
 if [ $action == "start" ]; then 
 
     # either use arguments.
-    if [ $# == "5" ]; then
+    if [ $# == "4" ]; then
         pair=$1
         size=$2
         stop=$3
