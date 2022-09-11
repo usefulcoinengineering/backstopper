@@ -265,13 +265,10 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     # Loop.
     while True : # Block until prices rise (or fall to stop limit order's sell price).
 
-        tradingpair = str(pair)
-        tradingexit = str(exitprice)
-        tradingsell = str(sellprice)
         try: 
             # Open websocket connection. 
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
-            websocketoutput : str = blockpricerange ( tradingpair, tradingexit, tradingsell ) 
+            websocketoutput : str = asyncio.run ( blockpricerange ( str(pair), str(exitprice), str(sellprice) ) )
         except Exception as e:
             # Report exception.
             notification = f'The websocket connection failed. '
@@ -319,22 +316,10 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     # Loop.
     while True : # Block until a new stop limit order is submitted. 
 
-        while True: # Block until present highest bid price information is attained. 
-            try:
-                # Get highest bid price.
-                # You can only sell for less.
-                highestbid = Decimal( ticker( pair )["bid"] )
-            except Exception as e:
-                logger.debug( f'An exception occured when trying to retrieve the price ticker. Error: {e}' )
-                time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
-                continue
-            break
-
-
-        # Validate "stop price".
-        # Make sure that the bids exceed it.
-        # Otherwise the order wont be accepted.
-        if highestbid.compare( exitprice ) == 1:
+        # Validate "last" (transaction) price is above upper bound.
+        # [i.e. ensure that "last" exceeds "exit" before continuing]
+        if Decimal( websocketoutput["price"] ).compare( exitprice ) == 1:
+            # Without the above check the stop order won't be accepted.
 
             # Post updated stop-limit order.
             logger.info = f'Submitting stop-limit (ask) order with a {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell. '
