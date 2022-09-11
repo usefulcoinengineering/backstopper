@@ -313,9 +313,8 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             logger.info ( f'Unable to cancel order. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to get information on the order's status infinitely.
+        logger.info = f'Cancelled {jsonresponse["price"]} {pair[3:]} stop sell order {jsonresponse["order_id"]}. '
         break
-    
-    logger.info = f'Cancelled {jsonresponse["price"]} {pair[3:]} stop sell order {jsonresponse["order_id"]}. '
 
     # Loop.
     while True : # Block until a new stop limit order is submitted. 
