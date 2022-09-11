@@ -301,8 +301,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     while True : # Block until existing stop order is cancelled. 
 
         # Attempt to cancel active and booked stop limit (ask) order.
-        logger.debug ( f'Going to try to cancel stop limit order {jsonresponse["order_id"]} in three seconds...' )
-        time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
+        logger.debug ( f'Going to try to cancel stop limit order {jsonresponse["order_id"]}...' )
 
         try:
             jsonresponse = cancelorder( jsonresponse["order_id"] ).json() # Post REST API call to cancel previous order.
