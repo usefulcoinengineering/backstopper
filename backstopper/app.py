@@ -271,7 +271,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         try: 
             # Open websocket connection. 
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
-            websocketoutput : str = asyncio.run ( blockpricerange ( tradingpair, tradingexit, tradingsell ) )
+            websocketoutput : str = blockpricerange ( tradingpair, tradingexit, tradingsell ) 
         except Exception as e:
             # Report exception.
             notification = f'The websocket connection failed. '
