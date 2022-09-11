@@ -23,8 +23,8 @@ async def blockpricerange(
     ) -> str : # Annotate that the return value of this function a dictionary (i.e. string type).
     
     # Cast as decimals.
-    upperbound = Decimal( upperbound )
-    lowerbound = Decimal( lowerbound )
+    upperlimit = Decimal( upperbound )
+    lowerlimit = Decimal( lowerbound )
 
     # Request trade data only.
     urlrequest = "wss://api.gemini.com/v1/marketdata/" + marketpair.lower()
@@ -32,7 +32,9 @@ async def blockpricerange(
     connection = urlrequest + parameters
 
     # Introduce function.
-    logger.info(f'Looping while {marketpair[:3]} prices are between {lowerbound:,.2f} {marketpair[3:]} and {upperbound:,.2f} {marketpair[3:]}')
+    infomessage = f'Looping while {marketpair[:3]} prices are between the {lowerlimit:,.2f} {marketpair[3:]} lower limit '
+    infomessage = infomessage + f'and the {upperlimit:,.2f} {marketpair[3:]} upper limit. '
+    logger.info( infomessage )
 
     keeplooping = True
 
@@ -58,23 +60,23 @@ async def blockpricerange(
                         for event in events:
                             tradeprice = Decimal( event[ 'price' ] )
                             tradevalue = Decimal( event[ 'amount' ] )
-                            amountless = Decimal( 100 * ( upperbound - tradeprice ) / upperbound )
-                            amountmore = Decimal( 100 * ( tradeprice - lowerbound ) / lowerbound )
+                            amountless = Decimal( 100 * ( upperlimit - tradeprice ) / upperlimit )
+                            amountmore = Decimal( 100 * ( tradeprice - lowerlimit ) / lowerlimit )
                             tradevalue = Decimal( tradevalue * tradeprice ).quantize( tradeprice )
                             if event['makerSide'] == "ask" : takeraction = "increase"
                             if event['makerSide'] == "bid" : takeraction = "decrease"
-                            infomessage = f'[{amountless:.2f}% below {upperbound:,.2f} {marketpair[3:]} upper bound] '
-                            infomessage = infomessage + f'[{amountmore:.2f}% above {lowerbound:,.2f} {marketpair[3:]} lower bound] '
+                            infomessage = f'[{amountless:.2f}% below {upperlimit:,.2f} {marketpair[3:]} upper bound] '
+                            infomessage = infomessage + f'[{amountmore:.2f}% above {lowerlimit:,.2f} {marketpair[3:]} lower bound] '
                             infomessage = infomessage + f'{tradeprice:,.2f} {marketpair[3:]} {event["makerSide"]} price taken to '
                             infomessage = infomessage + f'quickly {takeraction} {marketpair[:3]} hoard by {tradevalue:,.2f} {marketpair[3:]}. '
                             logger.info ( f'{infomessage}' )
                             if event['makerSide'] == "ask" : 
-                                if lowerbound.compare( tradeprice ) == 1 : 
-                                    infomessage = f'{lowerbound:,.2f} {marketpair[3:]} lower/ask price bound breached. '
+                                if lowerlimit.compare( tradeprice ) == 1 : 
+                                    infomessage = f'{lowerlimit:,.2f} {marketpair[3:]} lower/ask price bound breached. '
                                     keeplooping = False
                             if event['makerSide'] == "bid" : 
-                                if tradeprice.compare( upperbound ) == 1 : 
-                                    infomessage = f'{upperbound:,.2f} {marketpair[3:]} upper/bid price bound breached. '
+                                if tradeprice.compare( upperlimit ) == 1 : 
+                                    infomessage = f'{upperlimit:,.2f} {marketpair[3:]} upper/bid price bound breached. '
                                     keeplooping = False
         logger.info ( infomessage )
         sendmessage ( infomessage )
