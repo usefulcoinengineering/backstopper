@@ -306,10 +306,10 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         try:
             jsonresponse = cancelorder( jsonresponse["order_id"] ).json() # Post REST API call to cancel previous order.
         except Exception as e:
-            logger.info ( f'Unable to cancel order. Error: {e}' )
+            logger.debug ( f'Unable to cancel order. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to get information on the order's status infinitely.
-        logger.info = f'Cancelled {jsonresponse["price"]} {pair[3:]} stop sell order {jsonresponse["order_id"]}. '
+        logger.debug = f'Cancelled {jsonresponse["price"]} {pair[3:]} stop sell order {jsonresponse["order_id"]}. '
         break
 
     # Loop.
