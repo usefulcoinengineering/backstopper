@@ -275,28 +275,17 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             logger.debug ( f'{e}: {notification}Let\'s reestablish the connection and try again! ' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Restart while loop logic.
-        logger.info ( f'{Decimal( websocketoutput["price"] ).quantize( tick ):,.2f} is out of bounds. ') # Report status.
+        lastprice = Decimal( websocketoutput["price"] ) # Define last price.
+        logger.info ( f'{lastprice.quantize( tick ):,.2f} {pair[3:]} is out of bounds. ') # Report status.
         break # Break out of the while loop because the subroutine ran successfully.
 
     # Check if lower bound breached.
     # If so, the stop order will "close".
-    if exitprice.compare( Decimal( websocketoutput["price"] ) ) == 1: 
+    if exitprice.compare( lastprice ) == 1: 
         logger.debug ( f'Ask prices have fallen below the ask price of the stop limit order {jsonresponse["order_id"]}. ' )
         logger.debug ( f'The stop order at {sellprice} {pair[3:]} should have been completely filled and now "closed". ' )
         break # The stop limit order should have been executed.
-    else:
-        exitprice = Decimal( websocketoutput["price"] ) # Set the exit price to the websocketoutput price and continue.
-
-    # Explain upcoming actions.
-    logger.debug ( f'Changing stopprice from {stopprice} to {Decimal( exitprice * stopratio ).quantize( tick )}. ')
-    logger.debug ( f'Changing sellprice from {sellprice} to {Decimal( exitprice * sellratio ).quantize( tick )}. ')
-
-    # Calculate new sell/stop prices.
-    stopprice = Decimal( exitprice * stopratio ).quantize( tick )
-    sellprice = Decimal( exitprice * sellratio ).quantize( tick )
-    # Note: "costprice" is no longer the basis of the new exit price (and thus stop and sell prices).
-    # Note: The last transaction price exceeds the previous exit price and creates the new exit price.
-
+    
     # Loop.
     while True : # Block until existing stop order is cancelled. 
 
@@ -312,49 +301,55 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         logger.debug = f'Cancelled {jsonresponse["price"]} {pair[3:]} stop sell order {jsonresponse["order_id"]}. '
         break
 
+    # Explain upcoming actions.
+    logger.debug ( f'Recalculating stop and sell prices based on last transaction price {lastprice} {pair[3:]}. ')
+    logger.debug ( f'Changing stopprice from {stopprice} to {Decimal( lastprice * stopratio ).quantize( tick )}. ')
+    logger.debug ( f'Changing sellprice from {sellprice} to {Decimal( lastprice * sellratio ).quantize( tick )}. ')
+
+    # Calculate new sell/stop prices.
+    stopprice = Decimal( lastprice * stopratio ).quantize( tick )
+    sellprice = Decimal( lastprice * sellratio ).quantize( tick )
+    # Note: "costprice" is no longer the basis of the new exit price (and thus stop and sell prices).
+    # Note: The last transaction price exceeds the previous exit price and creates the new exit price.
+
     # Loop.
     while True : # Block until a new stop limit order is submitted. 
 
-        # Validate "last" (transaction) price is above upper bound.
-        # [i.e. ensure that "last" exceeds "exit" before continuing]
-        if Decimal( websocketoutput["price"] ).compare( exitprice ) == 1:
-            # Without the above check the stop order won't be accepted.
-
-            # Post updated stop-limit order.
-            logger.info = f'Submitting stop-limit (ask) order with a {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell. '
-            logger.info = f'There will be an unrealized (i.e. "ratio gain") {ratiogain:,.2f}% profit/loss of {quotegain:,.2f} {pair[3:]} '
-            # sendmessage ( f'Submitting {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell limit order. ' )
-            # sendmessage ( f'That would realize {quotegain:,.2f} {pair[3:]} [i.e. return {ratiogain:,.2f}%]. ' )
-            try:
-                jsonresponse = askstoplimit( str(pair), str(size), str(stopprice), str(sellprice) ).json()
-                """
-                    Response format expected:
-                        {
-                            "order_id": "7419662",
-                            "id": "7419662",
-                            "symbol": "btcusd",
-                            "exchange": "gemini",
-                            "avg_execution_price": "0.00",
-                            "side": "buy",
-                            "type": "stop-limit",
-                            "timestamp": "1572378649",
-                            "timestampms": 1572378649018,
-                            "is_live": True,
-                            "is_cancelled": False,
-                            "is_hidden": False,
-                            "was_forced": False,
-                            "executed_amount": "0",
-                            "options": [],
-                            "stop_price": "10400.00",
-                            "price": "10500.00",
-                            "original_amount": "0.01"
-                        }
-                """
-            except Exception as e:
-                logger.debug ( f'Unable to get information on the stop-limit order cancellation request. Error: {e}' )
-                time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
-                continue # Keep trying to post stop limit order infinitely.
-            break
+        # Post updated stop-limit order.
+        logger.info = f'Submitting stop-limit (ask) order with a {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell. '
+        logger.info = f'There will be an unrealized (i.e. "ratio gain") {ratiogain:,.2f}% profit/loss of {quotegain:,.2f} {pair[3:]} '
+        # sendmessage ( f'Submitting {stopprice:,.2f} {pair[3:]} stop {sellprice:,.2f} {pair[3:]} sell limit order. ' )
+        # sendmessage ( f'That would realize {quotegain:,.2f} {pair[3:]} [i.e. return {ratiogain:,.2f}%]. ' )
+        try:
+            jsonresponse = askstoplimit( str(pair), str(size), str(stopprice), str(sellprice) ).json()
+            """
+                Response format expected:
+                    {
+                        "order_id": "7419662",
+                        "id": "7419662",
+                        "symbol": "btcusd",
+                        "exchange": "gemini",
+                        "avg_execution_price": "0.00",
+                        "side": "buy",
+                        "type": "stop-limit",
+                        "timestamp": "1572378649",
+                        "timestampms": 1572378649018,
+                        "is_live": True,
+                        "is_cancelled": False,
+                        "is_hidden": False,
+                        "was_forced": False,
+                        "executed_amount": "0",
+                        "options": [],
+                        "stop_price": "10400.00",
+                        "price": "10500.00",
+                        "original_amount": "0.01"
+                    }
+            """
+        except Exception as e:
+            logger.debug ( f'Unable to get information on the stop-limit order cancellation request. Error: {e}' )
+            time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
+            continue # Keep trying to post stop limit order infinitely.
+        break
 
 # Recalculate quote gain.
 quotegain = Decimal( sellprice * size - costprice * size ).quantize( tick )
