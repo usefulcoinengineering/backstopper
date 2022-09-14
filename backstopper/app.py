@@ -62,14 +62,14 @@ assetcurrency : str = currencypair[:3]
 
 # Cast decimals.
 tradesize = Decimal( longquantity )
-stopratio = Decimal( stopdiscount )
-sellratio = Decimal( selldiscount )
+stopinput = Decimal( stopdiscount )
+sellinput = Decimal( selldiscount )
 
 # Make sure "sell" is more than "stop".
 # Gemini requires this for stop ask orders:
 # The stop price must exceed the sell price.
-if stopratio.compare( sellratio ) == 1:
-    notification = f'The sell price discount {sellratio*100}* cannot be larger than the stop price discount {stopratio*100}%. '
+if stopinput.compare( sellinput ) == 1:
+    notification = f'The sell price discount {sellinput*100}* cannot be larger than the stop price discount {stopinput*100}%. '
     logger.error ( f'{notification}' )
     sys.exit(1)
 
@@ -127,15 +127,15 @@ asyncio.run ( confirmexecution( jsonresponse["order_id"] ) )
 costprice = Decimal( jsonresponse["price"] )
 
 # Calculate exit price.
-exitratio = Decimal( 1 + sellratio + geminiapifee )
+exitratio = Decimal( 1 + sellinput + geminiapifee )
 exitprice = Decimal( costprice * exitratio ).quantize( tick )
 
 # Calculate stop price.
-stopratio = Decimal( 1 - stopratio )
+stopratio = Decimal( 1 - stopinput )
 stopprice = Decimal( exitprice * stopratio ).quantize( tick )
 
 # Calculate sell price.
-sellratio = Decimal( 1 - sellratio - geminiapifee )
+sellratio = Decimal( 1 - sellinput - geminiapifee )
 sellprice = Decimal( exitprice * sellratio ).quantize( tick )
 
 # Calculate quote gain.
@@ -159,7 +159,7 @@ logger.info ( f'Ratio Gain: {ratiogain:.2f}%' )
 # Explain the opening a websocket connection.
 # Also explain the wait for an increase in the prices sellers are willing to take to rise above the "exitprice".
 infomessage = f'Waiting for sellers to take {exitprice:,.2f} {quotecurrency} to rid themselves of {assetcurrency} '
-infomessage = infomessage + f'[i.e. rise {Decimal( sellratio + geminiapifee ) * 100:,.2f}%]. '
+infomessage = infomessage + f'[i.e. rise {Decimal( sellinput + geminiapifee ) * 100:,.2f}%]. '
 logger.info ( f'{infomessage}' ) ; sendmessage ( f'{infomessage}' )
 
 # Loop.
@@ -214,11 +214,11 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     if not jsonresponse["is_live"] : break
 
     # Explain upcoming actions.
-    logger.debug ( f'Changing exitratio from {exitratio} to {Decimal( 1 + stopratio + geminiapifee )}. ')
+    logger.debug ( f'Changing exitratio from {exitratio} to {Decimal( 1 + stopinput + geminiapifee )}. ')
     logger.debug ( f'Changing exitprice from {exitprice} to {Decimal( exitprice * exitratio ).quantize( tick )}. ')
 
     # Lower the exit ratio to lock gains faster.
-    exitratio = Decimal( 1 + stopratio + geminiapifee )
+    exitratio = Decimal( 1 + stopinput + geminiapifee )
 
     # Calculate new exit price (block until exitprice exceeded).
     exitprice = Decimal( exitprice * exitratio ).quantize( tick )
