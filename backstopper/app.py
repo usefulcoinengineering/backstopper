@@ -208,7 +208,10 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
 
     # Augment counter.
     iteration = iteration + 1
-    logger.debug ( iteration )
+
+    # Explain iteration.
+    explanation  = f'This is iteration: {iteration}. '
+    logger.info ( explanation )
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
@@ -267,7 +270,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         break
 
     # Explain upcoming actions.
-    explanation = f'Recalculate stop and sell pricing based on the last price {lastprice} {quotecurrency}. \n'
+    explanation  = f'\nRecalculate stop and sell pricing based on the last price {lastprice} {quotecurrency}. \n'
     explanation += f'Changing stopprice from {stopprice} to {Decimal( lastprice * stopratio ).quantize( tick )}. \n'
     explanation += f'Changing sellprice from {sellprice} to {Decimal( lastprice * sellratio ).quantize( tick )}. \n'
     logger.info ( explanation )
