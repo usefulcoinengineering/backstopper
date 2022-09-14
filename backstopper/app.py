@@ -267,10 +267,11 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         break
 
     # Explain upcoming actions.
-    logger.debug ( f'Recalculate stop and sell pricing based on the last price {lastprice} {quotecurrency}. ')
-    logger.debug ( f'Changing stopprice from {stopprice} to {Decimal( lastprice * stopratio ).quantize( tick )}. ')
-    logger.debug ( f'Changing sellprice from {sellprice} to {Decimal( lastprice * sellratio ).quantize( tick )}. ')
-
+    explanation = f'Recalculate stop and sell pricing based on the last price {lastprice} {quotecurrency}. \n'
+    explanation += f'Changing stopprice from {stopprice} to {Decimal( lastprice * stopratio ).quantize( tick )}. \n'
+    explanation += f'Changing sellprice from {sellprice} to {Decimal( lastprice * sellratio ).quantize( tick )}. \n'
+    logger.info ( explanation )
+    
     # Calculate new sell/stop prices.
     stopprice = Decimal( lastprice * stopratio ).quantize( tick )
     sellprice = Decimal( lastprice * sellratio ).quantize( tick )
