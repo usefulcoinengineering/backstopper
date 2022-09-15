@@ -8,7 +8,7 @@
 
 # check for running bots/processes.
 echo -e "\nchecking for active backstopper bots... "
-ps auwx | grep -e "backstopper" | grep -v "grep" && echo -e "\t...there are active backstopper bots running.\n "
+ps auwx | grep -e "[b]ackstopper" && echo -e "\t...there are active backstopper bots running.\n "
 if [ $? == "1" ]; then echo -e "\t...no active bots found...\n " ; fi
 
 # do we kill existing processes or start a new bot?
