@@ -201,17 +201,14 @@ while True : # Block until achieving the successful submission of an initial sto
         break # Break out of the while loop because the subroutine ran successfully.
 
 # Counter.
-iteration = 0
+iteration : int = 0
 
 # Loop.
 while True : # Block until prices rise (then cancel and resubmit stop limit order) or block until a stop limit ask order was "closed". 
 
     # Augment counter.
-    iteration = iteration + 1
-
-    # Explain iteration.
-    explanation  = f'This is iteration: {iteration}. '
-    logger.info ( explanation )
+    iteration += 1
+    logger.debug ( f'This is iteration: {iteration}. ' )
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
