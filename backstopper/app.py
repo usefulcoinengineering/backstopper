@@ -201,16 +201,8 @@ while True : # Block until achieving the successful submission of an initial sto
             logger.info( f'Initial stop limit order {jsonresponse["order_id"]} is live on the Gemini orderbook. ' )
             break # Break out of the while loop because the subroutine ran successfully.
 
-# Counter.
-iteration : int = 0
-
 # Loop.
 while True : # Block until prices rise (then cancel and resubmit stop limit order) or block until a stop limit ask order was "closed". 
-
-    # Augment counter.
-    iteration += 1
-    iterationstatement : str = f'This is iteration: {iteration}. '
-    logger.debug ( iterationstatement )
 
     # Break out of loop if order "closed".
     if not jsonresponse["is_live"] : break
