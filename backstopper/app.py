@@ -175,8 +175,9 @@ while True : # Block until the price sellers are willing to take exceeds the exi
         logger.debug ( f'{notification}Let\'s reestablish the connection and try again! ' )
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
         continue # Restart while loop logic.
-    logger.info ( f'{Decimal( websocketoutput["price"] ).quantize( tick ):,.2f} is out of bounds. ') # Report status.
-    break # Break out of the while loop because the subroutine ran successfully.
+    else:
+        logger.info ( f'{Decimal( websocketoutput["price"] ).quantize( tick ):,.2f} is out of bounds. ') # Report status.
+        break # Break out of the while loop because the subroutine ran successfully.
 
 # Loop.
 while True : # Block until achieving the successful submission of an initial stop limit ask order. 
@@ -194,11 +195,11 @@ while True : # Block until achieving the successful submission of an initial sto
         logger.info ( f'Unable to get information on ask stop limit order. Error: {e}' )
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
         continue # Keep trying to submit ask stop limit order.
-
-    logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
-    if jsonresponse['is_live'] :
-        logger.info( f'Initial stop limit order {jsonresponse["order_id"]} is live on the Gemini orderbook. ' )
-        break # Break out of the while loop because the subroutine ran successfully.
+    else:
+        logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
+        if jsonresponse['is_live'] :
+            logger.info( f'Initial stop limit order {jsonresponse["order_id"]} is live on the Gemini orderbook. ' )
+            break # Break out of the while loop because the subroutine ran successfully.
 
 # Counter.
 iteration : int = 0
@@ -241,9 +242,10 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             logger.debug ( f'{e}: {notification}Let\'s reestablish the connection and try again! ' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Restart while loop logic.
-        lastprice = Decimal( websocketoutput["price"] ) # Define last price.
-        logger.info ( f'{lastprice.quantize( tick ):,.2f} {quotecurrency} is out of bounds. ') # Report status.
-        break # Break out of the while loop because the subroutine ran successfully.
+        else:
+            lastprice = Decimal( websocketoutput["price"] ) # Define last price.
+            logger.info ( f'{lastprice.quantize( tick ):,.2f} {quotecurrency} is out of bounds. ') # Report status.
+            break # Break out of the while loop because the subroutine ran successfully.
 
     # Check if lower bound breached.
     # If so, the stop order will "close".
@@ -264,8 +266,9 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             logger.debug ( f'Unable to cancel order. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to get information on the order's status infinitely.
-        logger.debug = f'Cancelled {jsonresponse["price"]} {quotecurrency} stop sell order {jsonresponse["order_id"]}. '
-        break
+        else:
+            logger.debug = f'Cancelled {jsonresponse["price"]} {quotecurrency} stop sell order {jsonresponse["order_id"]}. '
+            break
 
     # Explain upcoming actions.
     explanation  = f'\nRecalculate stop and sell pricing based on the last price {lastprice} {quotecurrency}. \n'
