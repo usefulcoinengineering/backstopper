@@ -48,12 +48,12 @@ stopdiscount : str = '0.0100'
 selldiscount : str = '0.0200'
 
 # Override defaults with command line parameters from BASH wrapper.
-if len(sys.argv) == 5:
+if len(sys.argv) == 5 :
     currencypair = sys.argv[1]
     longquantity = sys.argv[2]
     stopdiscount = sys.argv[3]
     selldiscount = sys.argv[4]
-else: 
+else : 
     logger.warning ( f'Incorrect number of command line arguments. Using default values for {currencypair} trailing...' )
 
 # Cast strings.
@@ -68,7 +68,7 @@ sellinput = Decimal( selldiscount )
 # Make sure "sell" is more than "stop".
 # Gemini requires this for stop ask orders:
 # The stop price must exceed the sell price.
-if stopinput.compare( sellinput ) == 1:
+if stopinput.compare( sellinput ) == 1 :
     notification = f'The sell price discount {sellinput*100}* cannot be larger than the stop price discount {stopinput*100}%. '
     logger.error ( f'{notification}' )
     sys.exit(1)
@@ -100,23 +100,23 @@ try :
         logger.debug ( '{notification} Let\'s exit. Please try rerunning the code!' )
         sys.exit(1) # Exit. Continue no further.
 
-    else:
+    else :
         infomessage = f'Bid order {jsonresponse["order_id"]} for {jsonresponse["remaining_amount"]} {jsonresponse["symbol"].upper()[:3]} '
         infomessage = infomessage + f'at {jsonresponse["price"]} {jsonresponse["symbol"].upper()[3:]} is active and booked. '
         logger.info ( infomessage )
         sendmessage ( infomessage )
 
-except KeyError as e:
-    warningmessage = f'KeyError: {e} was not present in the response from the REST API server.'
+except KeyError as e :
+    warningmessage = f'KeyError : {e} was not present in the response from the REST API server.'
     logger.warning ( warningmessage )
-    try:    
+    try :    
         if jsonresponse["result"] : 
             criticalmessage = f'\"{jsonresponse["reason"]}\" {jsonresponse["result"]}: {jsonresponse["message"]}'
             logger.critical ( criticalmessage ) ; sendmessage ( criticalmessage )
             sys.exit(1)
 
-    except Exception as e:
-        criticalmessage = f'Exception: {e} '
+    except Exception as e :
+        criticalmessage = f'Exception : {e} '
         logger.critical ( f'Unexpecter error. Unsuccessful bid order submission. {criticalmessage}' )
         sys.exit(1)
 
@@ -189,13 +189,13 @@ while True : # Block until achieving the successful submission of an initial sto
     notification = notification + f'sell {longquantity} {assetcurrency}. Resulting in a {ratiogain:,.2f}% gain if executed. '
     logger.debug ( f'{notification}' ) ; sendmessage ( f'{notification}' )
     
-    try:    
+    try :    
         jsonresponse = askstoplimit( currencypair, longquantity, str(stopprice), str(sellprice) ).json()
-    except Exception as e:
+    except Exception as e :
         logger.info ( f'Unable to get information on ask stop limit order. Error: {e}' )
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
         continue # Keep trying to submit ask stop limit order.
-    else:
+    else :
         logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
         if jsonresponse['is_live'] :
             logger.info( f'Initial stop limit order {jsonresponse["order_id"]} is live on the Gemini orderbook. ' )
@@ -224,24 +224,24 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     # Loop.
     while True : # Block until prices rise (or fall to stop limit order's sell price).
 
-        try: 
+        try : 
             # Open websocket connection. 
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
             websocketoutput : str = asyncio.run ( blockpricerange ( str(currencypair), str(exitprice), str(sellprice) ) )
-        except Exception as e:
+        except Exception as e :
             # Report exception.
             notification = f'The websocket connection failed. '
-            logger.debug ( f'{e}: {notification}Let\'s reestablish the connection and try again! ' )
+            logger.debug ( f'{e} : {notification}Let\'s reestablish the connection and try again! ' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Restart while loop logic.
-        else:
+        else :
             lastprice = Decimal( websocketoutput["price"] ) # Define last price.
             logger.info ( f'{lastprice.quantize( tick ):,.2f} {quotecurrency} is out of bounds. ') # Report status.
             break # Break out of the while loop because the subroutine ran successfully.
 
     # Check if lower bound breached.
     # If so, the stop order will "close".
-    if exitprice.compare( lastprice ) == 1: 
+    if exitprice.compare( lastprice ) == 1 : 
         logger.debug ( f'Ask prices have fallen below the ask price of the stop limit order {jsonresponse["order_id"]}. ' )
         logger.debug ( f'The stop order at {sellprice} {quotecurrency} should have been completely filled and now "closed". ' )
         break # The stop limit order should have been executed.
@@ -252,13 +252,13 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         # Attempt to cancel active and booked stop limit (ask) order.
         logger.debug ( f'Going to try to cancel stop limit order {jsonresponse["order_id"]}...' )
 
-        try:
+        try :
             jsonresponse = cancelorder( jsonresponse["order_id"] ).json() # Post REST API call to cancel previous order.
-        except Exception as e:
+        except Exception as e :
             logger.debug ( f'Unable to cancel order. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to get information on the order's status infinitely.
-        else:
+        else :
             logger.debug = f'Cancelled {jsonresponse["price"]} {quotecurrency} stop sell order {jsonresponse["order_id"]}. '
             break
 
@@ -271,8 +271,8 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     # Calculate new sell/stop prices.
     stopprice = Decimal( lastprice * stopratio ).quantize( tick )
     sellprice = Decimal( lastprice * sellratio ).quantize( tick )
-    # Note: "costprice" is no longer the basis of the new exit price (and thus stop and sell prices).
-    # Note: The last transaction price exceeds the previous exit price and creates the new exit price.
+    # Note : "costprice" is no longer the basis of the new exit price (and thus stop and sell prices).
+    # Note : The last transaction price exceeds the previous exit price and creates the new exit price.
 
     # Loop.
     while True : # Block until a new stop limit order is submitted. 
