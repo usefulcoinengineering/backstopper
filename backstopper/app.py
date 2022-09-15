@@ -208,8 +208,8 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     if not jsonresponse["is_live"] : break
 
     # Explain upcoming actions.
-    logger.debug ( f'Changing exitratio from {exitratio} to {Decimal( 1 + stopinput + geminiapifee )}. ')
-    logger.debug ( f'Changing exitprice from {exitprice} to {Decimal( exitprice * exitratio ).quantize( tick )}. ')
+    debugmessage = f'Changing exitratio from {exitratio} to {Decimal( 1 + stopinput + geminiapifee )}. ' ; logger.debug ( debugmessage )
+    debugmessage = f'Changing exitprice from {exitprice} to {Decimal( exitprice * exitratio ).quantize( tick )}. ' ; logger.debug ( debugmessage )
 
     # Lower the exit ratio to lock gains faster.
     exitratio = Decimal( 1 + stopinput + geminiapifee )
@@ -227,7 +227,9 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         try : 
             # Open websocket connection. 
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
-            websocketoutput : str = asyncio.run ( blockpricerange ( str(currencypair), str(exitprice), str(sellprice) ) )
+            exitpricestring : str = str(exitprice)
+            sellpricestring : str = str(sellprice)
+            websocketoutput : str = asyncio.run ( blockpricerange ( currencypair, exitpricestring, exitpricestring ) )
         except Exception as e :
             # Report exception.
             notification = f'The websocket connection failed. '
@@ -236,7 +238,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             continue # Restart while loop logic.
         else :
             lastprice = Decimal( websocketoutput["price"] ) # Define last price.
-            logger.info ( f'{lastprice.quantize( tick ):,.2f} {quotecurrency} is out of bounds. ') # Report status.
+            messaging = f'{lastprice.quantize( tick ):,.2f} {quotecurrency} is out of bounds. ' ; logger.info ( messaging ) # Report status.
             break # Break out of the while loop because the subroutine ran successfully.
 
     # Check if lower bound breached.
