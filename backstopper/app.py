@@ -84,7 +84,7 @@ geminiapifee = Decimal( 0.0001 ) * Decimal ( notionalvolume().json()["api_maker_
 logger.debug ( f'Submitting {currencypair} frontrunning limit bid order.' )
 
 try :
-    jsonresponse = bidorder( currencypair, longquantity ).json()
+    jsonresponse : str = bidorder( currencypair, longquantity ).json()
 except Exception as e :
     # Report exception.
     notification = f'While trying to submit a frontrunning limit bid order the follow error occurred: {e} '
@@ -190,7 +190,7 @@ while True : # Block until achieving the successful submission of an initial sto
     logger.debug ( f'{notification}' ) ; sendmessage ( f'{notification}' )
     
     try :    
-        jsonresponse = askstoplimit( currencypair, longquantity, str(stopprice), str(sellprice) ).json()
+        jsonresponse : str = askstoplimit( currencypair, longquantity, str(stopprice), str(sellprice) ).json()
     except Exception as e :
         logger.info ( f'Unable to get information on ask stop limit order. Error: {e}' )
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
@@ -255,7 +255,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         logger.debug ( f'Going to try to cancel stop limit order {jsonresponse["order_id"]}...' )
 
         try :
-            jsonresponse = cancelorder( jsonresponse["order_id"] ).json() # Post REST API call to cancel previous order.
+            jsonresponse : str = cancelorder( jsonresponse["order_id"] ).json() # Post REST API call to cancel previous order.
         except Exception as e :
             logger.debug ( f'Unable to cancel order. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
@@ -285,7 +285,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         # sendmessage ( f'Submitting {stopprice:,.2f} {quotecurrency} stop {sellprice:,.2f} {quotecurrency} sell limit order. ' )
         # sendmessage ( f'That would realize {quotegain:,.2f} {quotecurrency} [i.e. return {ratiogain:,.2f}%]. ' )
         try:
-            jsonresponse = askstoplimit( currencypair, longquantity, str(stopprice), str(sellprice) ).json()
+            jsonresponse : str = askstoplimit( currencypair, longquantity, str(stopprice), str(sellprice) ).json()
             """
                 Response format expected:
                     {
@@ -314,7 +314,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to post stop limit order infinitely.
         else:
-            logger.info = f'Submitted {jsonresponse["type"]} {jsonresponse["side"]} order with a {jsonresponse["stop_price"]} {quotecurrency} stop and a {jsonresponse["price"]} {quotecurrency} sell. '
+            # logger.info = f'Submitted {jsonresponse["type"]} {jsonresponse["side"]} order with a {jsonresponse["stop_price"]} {quotecurrency} stop and a {jsonresponse["price"]} {quotecurrency} sell. '
             break
 
 # Recalculate quote gain.
