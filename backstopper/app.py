@@ -313,7 +313,9 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             logger.debug ( f'Unable to get information on the stop-limit order cancellation request. Error: {e}' )
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to post stop limit order infinitely.
-        break
+        else:
+            logger.info = f'Submitted {jsonresponse["type"]} {jsonresponse["side"]} order with a {jsonresponse["stop_price"]} {quotecurrency} stop and a {jsonresponse["price"]} {quotecurrency} sell. '
+            break
 
 # Recalculate quote gain.
 quotegain = Decimal( sellprice * tradesize - costprice * tradesize ).quantize( tick )
