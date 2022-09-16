@@ -314,7 +314,7 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
             time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
             continue # Keep trying to post stop limit order infinitely.
         else:
-            # logger.info = f'Submitted {jsonresponse["type"]} {jsonresponse["side"]} order with a {jsonresponse["stop_price"]} {quotecurrency} stop and a {jsonresponse["price"]} {quotecurrency} sell. '
+            logger.info = f'Submitted {jsonresponse["type"]} {jsonresponse["side"]} order with a {jsonresponse["stop_price"]} {quotecurrency} stop and a {jsonresponse["price"]} {quotecurrency} sell. '
             break
 
 # Recalculate quote gain.
