@@ -208,8 +208,8 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
     if not jsonresponse["is_live"] : break
 
     # Explain upcoming actions.
-    debugmessage = f'Changing exitratio from {exitratio} to {Decimal( 1 + stopinput + geminiapifee )}. ' ; logger.debug ( debugmessage )
-    debugmessage = f'Changing exitprice from {exitprice} to {Decimal( exitprice * exitratio ).quantize( tick )}. ' ; logger.debug ( debugmessage )
+    # debugmessage = f'Changing exitratio from {exitratio} to {Decimal( 1 + stopinput + geminiapifee )}. ' ; logger.debug ( debugmessage )
+    # debugmessage = f'Changing exitprice from {exitprice} to {Decimal( exitprice * exitratio ).quantize( tick )}. ' ; logger.debug ( debugmessage )
 
     # Lower the exit ratio to lock gains faster.
     exitratio = Decimal( 1 + stopinput + geminiapifee )
