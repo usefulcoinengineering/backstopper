@@ -168,7 +168,7 @@ while True : # Block until the price sellers are willing to take exceeds the exi
     try: 
         # Open websocket connection. 
         # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
-        websocketoutput : str = asyncio.run (  blockpricerange ( currencypair,  str(exitprice), str(-exitprice) ) )
+        websocketoutput : dict = asyncio.run (  blockpricerange ( currencypair,  str(exitprice), str(-exitprice) ) )
     except Exception as e:
         # Report exception.
         notification = f'Error : {e} '
@@ -227,9 +227,9 @@ while True : # Block until prices rise (then cancel and resubmit stop limit orde
         try : 
             # Open websocket connection. 
             # Block until out of bid price bounds (work backwards to get previous stop order's sell price).
-            exitpricestring : str = str(exitprice)
-            sellpricestring : str = str(sellprice)
-            websocketoutput : str = asyncio.run ( blockpricerange ( currencypair, exitpricestring, exitpricestring ) )
+            exitpricestring : str  = str(exitprice)
+            sellpricestring : str  = str(sellprice)
+            websocketoutput : dict = asyncio.run ( blockpricerange ( currencypair, exitpricestring, exitpricestring ) )
         except Exception as e :
             # Report exception.
             notification = f'The websocket connection failed. '
