@@ -20,37 +20,36 @@ async def blockpricerange(
         marketpair: str,
         upperbound: str,
         lowerbound: str
-    ) -> str : # Annotate that the return value of this function a dictionary (i.e. string type).
+    ) -> dict : # Annotate that the return value of this function is a dictionary (i.e. dictionary type).
     
     # Cast as decimals.
     upperlimit = Decimal( upperbound )
     lowerlimit = Decimal( lowerbound )
 
     # Request trade data only.
-    urlrequest = "wss://api.gemini.com/v1/marketdata/" + marketpair.lower()
-    parameters = "?trades=true&heartbeat=true"
-    connection = urlrequest + parameters
+    urlrequest : str = "wss://api.gemini.com/v1/marketdata/" + marketpair.lower()
+    parameters : str = "?trades=true&heartbeat=true"
+    connection : str = urlrequest + parameters
 
     # Introduce function.
-    infomessage = f'Looping while {marketpair[:3]} prices are between the {lowerlimit:,.2f} {marketpair[3:]} lower limit '
-    infomessage = infomessage + f'and the {upperlimit:,.2f} {marketpair[3:]} upper limit. '
-    logger.info( infomessage )
+    infomessage : str = f'Looping while {marketpair[:3]} prices are between the {lowerlimit:,.2f} {marketpair[3:]} lower limit '
+    logger.info ( f'{infomessage} and the {upperlimit:,.2f} {marketpair[3:]} upper limit. ' )
 
-    keeplooping = True
+    keeplooping : bool = True
 
-    async with websockets.connect(connection) as websocket:
+    async with websockets.connect( connection ) as websocket:
         while keeplooping :
-            message = await websocket.recv()
+            message : str = await websocket.recv()
             # Remove comment to debug with: logger.debug( message )
             # Load update into a dictionary.
-            dictionary = json.loads( message )
+            dictionary : dict = json.loads( message )
 
             # Display heartbeat
             if dictionary[ 'type' ] == "heartbeat" : logger.debug ( f'Heartbeat: {dictionary[ "socket_sequence" ]}' )
             else :
 
                 # Define events array/list.
-                events = dictionary[ 'events' ]
+                events : list = dictionary[ 'events' ]
                 if events == [] : 
                     logger.debug( f'No update events. Received: {message}  ' )
                 else:
@@ -80,14 +79,14 @@ async def blockpricerange(
                                     keeplooping = False
         logger.info ( infomessage )
         sendmessage ( infomessage )
-        return event # Dictionary.
+        return dict ( event ) # Dictionary.
 
 if __name__ == "__main__":
 
     # Set default trading pair and loop exit price in case a BASH wrapper has not been used.
-    marketpair = "ETHUSD"
-    upperbound = "1500"
-    lowerbound = "1400"
+    marketpair : str = "ETHUSD"
+    upperbound : str = "1500"
+    lowerbound : str = "1400"
 
     # Override defaults with command line parameters from BASH wrapper.
     if len ( sys.argv ) == 4 :
@@ -101,7 +100,7 @@ if __name__ == "__main__":
         logger.warning ( f'lowerbound: {lowerbound}' )
 
     try: # Enter price monitor loop.
-        messageresponse = asyncio.run (
+        messageresponse : dict = asyncio.run (
             blockpricerange (
                 marketpair, 
                 upperbound, 
