@@ -204,7 +204,7 @@ while True : # Block until achieving the successful submission of an initial sto
 while True : # Block until prices rise (then cancel and resubmit stop limit order) or block until a stop limit ask order was "closed". 
 
     # Break out of loop if order "closed".
-    logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
+    logger.debug ( f'\n{jsonresponse} ' )
     if not jsonresponse["is_live"] : break
 
     # Explain upcoming actions.
