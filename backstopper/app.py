@@ -196,7 +196,6 @@ while True : # Block until achieving the successful submission of an initial sto
         time.sleep(3) # Sleep for 3 seconds since we are interfacing with a rate limited Gemini REST API.
         continue # Keep trying to submit ask stop limit order.
     else :
-        logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
         if jsonresponse['is_live'] :
             logger.info( f'Initial stop limit order {jsonresponse["order_id"]} is live on the Gemini orderbook. ' )
             break # Break out of the while loop because the subroutine ran successfully.
@@ -205,6 +204,7 @@ while True : # Block until achieving the successful submission of an initial sto
 while True : # Block until prices rise (then cancel and resubmit stop limit order) or block until a stop limit ask order was "closed". 
 
     # Break out of loop if order "closed".
+    logger.debug ( f'\n{json.dumps( jsonresponse, sort_keys=True, indent=4, separators=(",", ": ") )} ' )
     if not jsonresponse["is_live"] : break
 
     # Explain upcoming actions.
