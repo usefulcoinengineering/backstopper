@@ -31,7 +31,7 @@ def notionalvolume() -> str:
     restapirequest = restserver + endpoint
     responseobject = requests.post( restapirequest, data = None, headers = headers['restheader'] )
 
-    return responseobject
+    return responseobject.json()
 
 if __name__ == "__main__":
 
