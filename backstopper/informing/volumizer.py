@@ -28,11 +28,12 @@ def notionalvolume() -> str:
     }
     headers = authenticate( payload )
 
-    request = restserver + endpoint
-    response = requests.post( request, data = None, headers = headers['restheader'] )
+    restapirequest = restserver + endpoint
+    responseobject = requests.post( restapirequest, data = None, headers = headers['restheader'] )
 
-    return response
+    return responseobject
 
 if __name__ == "__main__":
 
-    notionalvolume()
+    infomessage = notionalvolume()
+    logger.info ( infomessage )
