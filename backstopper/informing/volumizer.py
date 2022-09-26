@@ -31,8 +31,8 @@ def notionalvolume() -> str:
     restapirequest = restserver + endpoint
     responseobject = requests.post( restapirequest, data = None, headers = headers['restheader'] )
 
-    return responseobject.url
-    
+    return responseobject.text
+
 if __name__ == "__main__":
 
     infomessage = notionalvolume()
